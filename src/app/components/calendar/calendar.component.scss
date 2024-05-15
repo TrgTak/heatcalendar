@@ -1,0 +1,37 @@
+.cell-invalid {
+    display: none;
+}
+.heat-calendar-container {
+    width: 100%;
+    text-align: center;
+    padding: 16px
+}
+.heat-calendar {
+    margin-left: auto;
+    margin-right: auto;
+    border-spacing: 4px;
+    overflow: hidden;
+    position: relative;
+    width: max-content;
+    border-collapse: collapse;
+    td {
+        padding: 2px;
+    }
+    th {
+        text-align: left;
+    }
+}
+.legend {
+    margin-right: 16px ;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+.legends {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    margin-top: 16px;
+}

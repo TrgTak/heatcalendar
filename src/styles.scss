@@ -1,0 +1,41 @@
+$babyBlue: (
+    "0": #a0d8f3,
+    "1": #5f90a8, 
+    "2": #527c90,
+    "3": #446778,
+    "4": #365260,
+);
+$borderSides: (
+    "l": "border-left", 
+    "r": "border-right",
+    "t": "border-top",
+    "b": "border-bottom"
+);
+
+@each $name, $glyph in $borderSides {
+    .border-#{$name} {
+        #{$glyph}: 2px solid #89cff0;
+    }
+}
+
+@each $name, $glyph in $babyBlue {
+    .c-blue-#{$name} {
+        color: $glyph !important;
+    }
+    .bg-blue-#{$name} {
+        background-color: $glyph !important;
+    }
+}
+
+.hc-tooltip {
+    position: absolute;
+    border-radius: 6px;
+    padding: 7px 10px;
+    color: #dbf0fa;
+    background-color: rgba(0, 0, 0, 0.8);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+.hc-tooltip-show {
+    opacity: 1;
+}

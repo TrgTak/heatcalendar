@@ -1,0 +1,14 @@
+.heat-calendar-cell {
+    border: none;
+    width: 16px !important;
+    height: 16px !important;
+    border-radius: 2px;
+    outline: 1px solid #c4e7f7;
+    outline-offset: -1px;
+    background-color: #dbf0fa;
+}
+.heat-calendar-cell:hover:not(.disabled), .heatcalendar-cell:focus:not(.disabled) {
+    background-color: #c4e7f7;
+    outline: 1px solid #527c90;
+    outline-offset: 0;
+}

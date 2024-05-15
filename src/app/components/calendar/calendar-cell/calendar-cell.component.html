@@ -1,0 +1,26 @@
+<div
+    *ngIf="!disabled"
+    class="heat-calendar-cell"
+    [ngClass]="{
+        'bg-blue-4': data > 20,
+        'bg-blue-3': data <= 20 && data > 15,
+        'bg-blue-2': data <= 15 && data > 10,
+        'bg-blue-1': data <= 10 && data > 5,
+        'bg-blue-0': data <= 5
+    }"
+    appTooltip
+    [info]="label"
+>
+</div>
+<div 
+    *ngIf="disabled"
+    class="disabled heat-calendar-cell"
+    [ngClass]="{
+        'bg-blue-4': data > 20,
+        'bg-blue-3': data <= 20 && data > 15,
+        'bg-blue-2': data <= 15 && data > 10,
+        'bg-blue-1': data <= 10 && data > 5,
+        'bg-blue-0': data <= 5
+    }"
+>
+</div>

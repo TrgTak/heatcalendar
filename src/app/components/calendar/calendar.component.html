@@ -1,0 +1,58 @@
+<div class="heat-calendar-container">
+    <h3>{{year()}}</h3>
+    <table class="heat-calendar">
+        <thead>
+            <tr>
+                <th [attr.colspan]="monthData[0].firstWeekDay === 0 ? 1 : 2"></th>
+                <th 
+                    *ngFor="let _ of [].constructor(12); trackBy: trackByItem; index as i"
+                    [attr.colspan]="monthData[i].firstWeekDay === 0 ? monthData[i].weekSpread : monthData[i].weekSpread - 1"
+                >
+                    <div class="label-column">{{monthLabels[i]}}</div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let dayLabel of dayLabels; trackBy: trackByItem; index as j">
+                <td>
+                    <small>
+                        {{dayLabel}}
+                    </small>
+                </td>
+                <td 
+                    *ngFor="let _ of [].constructor(columnCount); trackBy: trackByItem; index as i"
+                    [ngClass]="{
+                        'border-l': i === 0 && !isInvalid(1 + j + i * 7),
+                        'border-r': isLastWeek(1 + j + i * 7 - monthData[0].firstWeekDay) || (i === 0 && isInvalid(1 + j)),
+                        'border-b': isEndOfTheMonth(1 + j + i * 7 - monthData[0].firstWeekDay) && j !== 6,
+                        'border-t': (i === 0 && j === monthData[0].firstWeekDay && j !== 0)
+                    }"
+                >
+                    <div 
+                        class="heat-calendar-day"
+                        [ngClass]="{'cell-invalid': isInvalid(1 + j + i * 7)}"
+                    >
+                        <app-calendar-cell
+                            [data]="data()[1 + j + i * 7]"
+                            [year]="year()"
+                            [yearDayIndex]="1 + j + i * 7 - monthData[0].firstWeekDay"
+                        ></app-calendar-cell>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="legends">
+        <div
+            class="legend"
+            *ngFor="let _ of [].constructor(5); trackBy: trackByItem; index as i"
+        >
+            <app-calendar-cell
+                [data]="i * 5"
+                [disabled]="true"
+            ></app-calendar-cell>
+            &nbsp;
+            <small>{{(i + 1) * 5 - 4}} {{i === 4 ? "or more" : "- " + (i + 1) * 5}} results</small>
+        </div>
+    </div>
+</div>
