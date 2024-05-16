@@ -1,11 +1,6 @@
 .cell-invalid {
     display: none;
 }
-.heat-calendar-container {
-    width: 100%;
-    text-align: center;
-    padding: 16px
-}
 .heat-calendar {
     margin-left: auto;
     margin-right: auto;
@@ -21,12 +16,6 @@
         text-align: left;
     }
 }
-.legend {
-    margin-right: 16px ;
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
-}
 .legends {
     display: flex;
     flex-wrap: wrap;
@@ -34,6 +23,12 @@
     justify-content: center;
     margin-bottom: 16px;
     margin-top: 16px;
+}
+.legend {
+    margin-right: 16px ;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
 }
 .label-column {
     text-transform: capitalize;

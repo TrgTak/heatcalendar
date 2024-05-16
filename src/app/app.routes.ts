@@ -5,7 +5,7 @@ export const routes: Routes = [
     {
         path: "",
         title: "Calendar",
-        loadComponent: () => import("./components/calendar/calendar.component").then(c => c.CalendarComponent),
+        loadComponent: () => import("./components/heat-calendar/heat-calendar.component").then(c => c.HeatCalendarComponent),
         data: {},
     },
 ];

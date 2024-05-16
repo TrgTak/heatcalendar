@@ -1,0 +1,27 @@
+.heat-calendar-container {
+    width: 100%;
+    text-align: center;
+    padding: 16px
+}
+.paginator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 32px
+}
+.paginator-button {
+    width: 32px;
+    height: 32px;
+    background-color: #dbf0fa;
+    border-radius: 50%;
+    border: none;
+    outline: 1px solid #c4e7f7;
+    outline-offset: -1px;
+    
+}
+.paginator-button:hover:not(:disabled), .paginator-button:focus:not(:disabled) {
+    background-color: #c4e7f7;
+    outline: 1px solid #527c90;
+    outline-offset: 0;
+    font-weight: bolder;
+}
