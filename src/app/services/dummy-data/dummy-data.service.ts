@@ -7,7 +7,8 @@ type AggregateResponse = {
 @Injectable({
   providedIn: 'root'
 })
-export class DataService {
+// FIXME: Dump this and replace with real data provision is available.
+export class DummyDataService {
   private resultSignal = model<AggregateResponse>({});
   readonly result = this.resultSignal.asReadonly();
   

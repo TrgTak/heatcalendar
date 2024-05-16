@@ -27,12 +27,12 @@ export class CalendarCellComponent implements DoCheck {
     const cellDate = new Date(ms);
     let arr = [];
     if (!this.data) {
-      arr.push("No results");
+      arr.push("No results on"); // FIXME: Hardcoded string. Translate or configure.
     }
     else {
-      arr.push(`${this.data} ${this.data > 1 ? "results":"result"}`)
+      arr.push(`${this.data} ${this.data > 1 ? "results":"result"} on`) // FIXME: Hardcoded string. Translate or configure.
     }
-    arr.push(`on ${cellDate.toLocaleDateString(this.calendar.locale, { month:'short', day:'numeric' })}`);
+    arr.push(`${cellDate.toLocaleDateString(this.calendar.locale, { month:'short', day:'numeric' })}`);
     this.label = arr.join(" ")
   }
   ngDoCheck(): void {

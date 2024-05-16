@@ -3,39 +3,36 @@
     <table class="heat-calendar">
         <thead>
             <tr>
-                <th [attr.colspan]="monthData[0].firstWeekDay === 0 ? 1 : 2"></th>
+                <!-- colspan in a way to push first month th to align with the given top td border of the month -->
+                <th [attr.colspan]="cellOffset === 0 ? 1 : 2"></th>
+                <!-- colspan in a way to push each following month th by also checking to how many calendar weeks the month is spreading to -->
                 <th 
-                    *ngFor="let _ of [].constructor(12); trackBy: trackByItem; index as i"
-                    [attr.colspan]="monthData[i].firstWeekDay === 0 ? monthData[i].weekSpread : monthData[i].weekSpread - 1"
+                    [attr.colspan]="monthData[i].firstDayWeekIndex === weekFirstDay ? monthData[i].weekSpread : monthData[i].weekSpread - 1"
+                    *ngFor="let _ of [].constructor(12); trackBy: trackBy; index as i"
                 >
                     <div class="label-column">{{monthLabels[i]}}</div>
                 </th>
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let dayLabel of dayLabels; trackBy: trackByItem; index as j">
+            <tr *ngFor="let dayLabel of dayLabels; trackBy: trackBy; index as y">
                 <td>
                     <small>
                         {{dayLabel}}
                     </small>
                 </td>
                 <td 
-                    *ngFor="let _ of [].constructor(columnCount); trackBy: trackByItem; index as i"
-                    [ngClass]="{
-                        'border-l': i === 0 && !isCellInvalid(j + i * 7),
-                        'border-r': isInLastWeek(j + i * 7) || (i === 0 && isCellInvalid(j)) || (i + 1 === columnCount && !isCellInvalid(j + i * 7)),
-                        'border-b': isEndOfTheMonth(j + i * 7) && j !== 6,
-                        'border-t': (i === 0 && j !== 0 && j === offset )
-                    }"
+                    *ngFor="let _ of [].constructor(columnCount); trackBy: trackBy; index as x"
+                    [ngClass]="getCellBorders(x, y)"
                 >
                     <div 
                         class="heat-calendar-day"
-                        [ngClass]="{'cell-invalid': isCellInvalid(j + i * 7)}"
+                        [ngClass]="{'cell-invalid': isCellInvalid(y + x * 7)}"
                     >
                         <app-calendar-cell
-                            [data]="data()[j + i * 7]"
+                            [data]="data()[y + x * 7]"
                             [year]="year()"
-                            [yearDayIndex]="j + i * 7 - offset"
+                            [yearDayIndex]="y + x * 7 - cellOffset"
                         ></app-calendar-cell>
                     </div>
                 </td>
@@ -45,13 +42,14 @@
     <div class="legends">
         <div
             class="legend"
-            *ngFor="let _ of [].constructor(5); trackBy: trackByItem; index as i"
+            *ngFor="let _ of [].constructor(5); trackBy: trackBy; index as i"
         >
             <app-calendar-cell
                 [data]="i * 5"
                 [disabled]="true"
             ></app-calendar-cell>
             &nbsp;
+            <!-- FIXME: Hardcoded string. Translate or configure. -->
             <small>{{(i + 1) * 5 - 4}} {{i === 4 ? "or more" : "- " + (i + 1) * 5}} results</small>
         </div>
     </div>
