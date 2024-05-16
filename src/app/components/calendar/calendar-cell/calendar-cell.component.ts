@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, DoCheck, Input } from '@angular/core';
 import { TooltipDirective } from '../../../directives/tooltip.directive';
+import { CalendarService } from '../../../services/calendar/calendar.service';
 
 @Component({
   selector: 'app-calendar-cell',
@@ -16,9 +17,12 @@ export class CalendarCellComponent implements DoCheck {
   @Input('yearDayIndex') yearDayIndex: number = 0;
   @Input('data') data: number = 0;
   @Input('disabled') disabled?: boolean = false;
-  label: string = ""
+  label: string = "";
+
+  constructor(private calendar: CalendarService) {}
+
   generateTooltip(year: number, dayIndex: number) {
-    const d = new Date(year, 0, 0);
+    const d = new Date(year, 0, 1);
     const ms = d.getTime() + dayIndex * 1000 * 60 * 60 * 24;
     const cellDate = new Date(ms);
     let arr = [];
@@ -28,7 +32,7 @@ export class CalendarCellComponent implements DoCheck {
     else {
       arr.push(`${this.data} ${this.data > 1 ? "results":"result"}`)
     }
-    arr.push(`on ${cellDate.toLocaleDateString('en-US', {month:'short', day:'2-digit'})}`);
+    arr.push(`on ${cellDate.toLocaleDateString(this.calendar.locale, { month:'short', day:'numeric' })}`);
     this.label = arr.join(" ")
   }
   ngDoCheck(): void {

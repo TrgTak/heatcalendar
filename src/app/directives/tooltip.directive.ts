@@ -7,21 +7,27 @@ import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 export class TooltipDirective {
   @Input() info: string | number = "";
   tooltip?: HTMLElement;
-  constructor(private el: ElementRef) {}
+  constructor(private el: ElementRef) {};
+  private timeoutID: any = undefined;
   @HostListener("mouseenter") onMouseEnter() {
     if (!this.tooltip && this.info) {
-      this.show();
+      this.timeoutID = setTimeout(() => this.show(), 200);
     }
   }
   @HostListener("mouseleave") onMouseLeave() {
+    if (this.timeoutID) {
+      this.timeoutID = clearTimeout(this.timeoutID);
+    }
     if (this.tooltip) {
       this.hide();
     }
   }
   show() {
-    this.create();
-    this.setPosition();
-    this.tooltip?.classList.add("hc-tooltip-show");
+    if (this.timeoutID) {
+      this.create();
+      this.setPosition();
+      this.tooltip?.classList.add("hc-tooltip-show");
+    }
   }
 
   hide() {

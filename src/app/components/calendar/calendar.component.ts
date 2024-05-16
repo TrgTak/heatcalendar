@@ -13,7 +13,6 @@ import { CalendarCellComponent } from './calendar-cell/calendar-cell.component';
 })
 export class CalendarComponent implements OnInit {
   private today = new Date();
-
   constructor(private calendar: CalendarService, private dummy: DataService) {}
 
   year = input<number>(this.today.getFullYear());
@@ -21,24 +20,28 @@ export class CalendarComponent implements OnInit {
   dayLabels = this.calendar.dayLabels;
   monthLabels = this.calendar.monthLabels;
   monthData = this.calendar.getMonthData(this.year());
-  cellCount = ((this.year() % 4 === 0 && this.year() % 100 > 0) || this.year() % 400 === 0) ? 366 : 365;
+  offset = this.monthData[0].firstWeekDay - this.calendar.locale.weekInfo.firstDay % 7
+  cellCount = this.calendar.isLeapYear(this.year()) ? 366 : 365;
   columnCount = Math.ceil(this.cellCount / 7);
-  monthTransitions = Object.values(this.monthData).map(md => md.lastDayYearIndex);
+  monthTransitions = this.calendar.getMonthTransitions(this.year());
 
   isEndOfTheMonth(dayIndex: number): boolean {
-    return this.monthTransitions.includes(dayIndex)
+    return this.monthTransitions.includes(dayIndex - this.offset)
   }
-  isLastWeek(dayIndex: number): boolean {
+  isInLastWeek(dayIndex: number): boolean {
     for (let i = dayIndex; i < dayIndex + 7; i ++) {
       if (this.isEndOfTheMonth(i)) return true
     }
     return false
   }
-  isInvalid(dayIndex: number): boolean {
-    return (
-      dayIndex <= this.monthData[0].firstWeekDay ||
-      dayIndex >= this.cellCount + this.monthData[0].firstWeekDay + 1
-    )
+  isCellInvalid(dayIndex: number): boolean {
+    if (dayIndex < 7 && this.monthData[0].firstWeekDay > 0) {
+      return dayIndex < this.offset
+    }
+    if (dayIndex >= this.cellCount + this.offset) {
+      return true
+    }
+    return false    
   }
   getMonthDay(dayIndex: number): number {
     if (dayIndex <= 31) return dayIndex

@@ -22,20 +22,20 @@
                 <td 
                     *ngFor="let _ of [].constructor(columnCount); trackBy: trackByItem; index as i"
                     [ngClass]="{
-                        'border-l': i === 0 && !isInvalid(1 + j + i * 7),
-                        'border-r': isLastWeek(1 + j + i * 7 - monthData[0].firstWeekDay) || (i === 0 && isInvalid(1 + j)),
-                        'border-b': isEndOfTheMonth(1 + j + i * 7 - monthData[0].firstWeekDay) && j !== 6,
-                        'border-t': (i === 0 && j === monthData[0].firstWeekDay && j !== 0)
+                        'border-l': i === 0 && !isCellInvalid(j + i * 7),
+                        'border-r': isInLastWeek(j + i * 7) || (i === 0 && isCellInvalid(j)) || (i + 1 === columnCount && !isCellInvalid(j + i * 7)),
+                        'border-b': isEndOfTheMonth(j + i * 7) && j !== 6,
+                        'border-t': (i === 0 && j !== 0 && j === offset )
                     }"
                 >
                     <div 
                         class="heat-calendar-day"
-                        [ngClass]="{'cell-invalid': isInvalid(1 + j + i * 7)}"
+                        [ngClass]="{'cell-invalid': isCellInvalid(j + i * 7)}"
                     >
                         <app-calendar-cell
-                            [data]="data()[1 + j + i * 7]"
+                            [data]="data()[j + i * 7]"
                             [year]="year()"
-                            [yearDayIndex]="1 + j + i * 7 - monthData[0].firstWeekDay"
+                            [yearDayIndex]="j + i * 7 - offset"
                         ></app-calendar-cell>
                     </div>
                 </td>
