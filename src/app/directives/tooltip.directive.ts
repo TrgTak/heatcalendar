@@ -5,24 +5,28 @@ import { Directive, ElementRef, HostListener, Input } from '@angular/core';
   standalone: true
 })
 export class TooltipDirective {
-  @Input() info: string | number = "";
-  tooltip?: HTMLElement;
   constructor(private el: ElementRef) {};
-  private timeoutID: any = undefined;
+  @Input() info: string | number = "";
+  private tooltip?: HTMLElement;
+  private timeoutID: any = undefined; // Handling DOM manipulations with timeouts for optimization.
+
   @HostListener("mouseenter") onMouseEnter() {
     if (!this.tooltip && this.info) {
-      this.timeoutID = setTimeout(() => this.show(), 200);
+      this.timeoutID = setTimeout(() => this.show(), 200); // Setting timeoutID before show() triggers.
     }
   }
+
   @HostListener("mouseleave") onMouseLeave() {
     if (this.timeoutID) {
-      this.timeoutID = clearTimeout(this.timeoutID);
+      this.timeoutID = clearTimeout(this.timeoutID); // Clearing timeoutID and preventing show() to trigger, if leaving happens too quick.
     }
     if (this.tooltip) {
       this.hide();
     }
   }
-  show() {
+
+  show(): void {
+    // DOM manipulation is prevented via this condition, in case if timeoutID is cleared via mouseleave event.
     if (this.timeoutID) {
       this.create();
       this.setPosition();
@@ -30,18 +34,21 @@ export class TooltipDirective {
     }
   }
 
-  hide() {
+  hide(): void {
+    // hide doesn't need to clear timeoutID as it already happens with mouseleave listener.
     this.tooltip?.classList.remove("hc-tooltip-show");
     this.tooltip?.remove();
     this.tooltip = undefined;
   }
-  create() {
+
+  create(): void {
     this.tooltip = document.createElement("span");
     this.tooltip.classList.add("hc-tooltip");
     this.tooltip.textContent = `${this.info}`;
     document.body.appendChild(this.tooltip);
   }
-  setPosition() {
+
+  setPosition(): void {
     const elementRect = this.el.nativeElement.getBoundingClientRect();
     const tooltipRect = this.tooltip?.getBoundingClientRect();
     if (!tooltipRect) return

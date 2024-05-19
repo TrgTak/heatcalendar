@@ -1,0 +1,14 @@
+<label></label>
+<select
+    class="hc-dropdown"
+    (change)="onChange($event)"
+    [attr.aria-label]="'select ' + label()"
+>
+    <option
+        *ngFor="let option of options()"
+        [value]="option.value"
+        [selected]="initial() === option.value"
+    >
+        {{option.label}}
+    </option>
+</select>

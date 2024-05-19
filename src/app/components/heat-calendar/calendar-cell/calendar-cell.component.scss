@@ -1,14 +1,17 @@
-.heat-calendar-cell {
+@use "../../../../styles/colors" as c;
+.heat-calendar-cell,
+.heat-calendar-legend {
     border: none;
     width: 16px !important;
     height: 16px !important;
     border-radius: 2px;
-    outline: 1px solid #c4e7f7;
+    outline: 1px solid c.$blue1;
     outline-offset: -1px;
-    background-color: #dbf0fa;
+    background-color: c.$blue0;
 }
-.heat-calendar-cell:hover:not(.disabled), .heatcalendar-cell:focus:not(.disabled) {
-    background-color: #c4e7f7;
-    outline: 1px solid #527c90;
+.heat-calendar-cell:hover:not(.disabled), 
+.heat-calendar-cell:focus:not(.disabled) {
+    background-color: c.$blue1;
+    outline: 1px solid ;
     outline-offset: 0;
 }

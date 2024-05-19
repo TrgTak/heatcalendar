@@ -1,9 +1,13 @@
+@use "./styles/colors" as colors;
 $babyBlue: (
-    "0": #a0d8f3,
-    "1": #5f90a8, 
-    "2": #527c90,
-    "3": #446778,
-    "4": #365260,
+    "disabled": colors.$disabled,
+    "0": colors.$blue0,
+    "1": colors.$blue1, 
+    "2": colors.$blue2,
+    "3": colors.$blue3,
+    "4": colors.$blue4,
+    "5": colors.$blue5,
+    "6": colors.$blue6,
 );
 $borderSides: (
     "l": "border-left", 
@@ -11,13 +15,11 @@ $borderSides: (
     "t": "border-top",
     "b": "border-bottom"
 );
-
 @each $name, $glyph in $borderSides {
     .border-#{$name} {
-        #{$glyph}: 2px solid #89cff0;
+        #{$glyph}: 2px solid colors.$blueBorder;
     }
 }
-
 @each $name, $glyph in $babyBlue {
     .c-blue-#{$name} {
         color: $glyph !important;
@@ -26,12 +28,11 @@ $borderSides: (
         background-color: $glyph !important;
     }
 }
-
 .hc-tooltip {
     position: absolute;
     border-radius: 6px;
     padding: 7px 10px;
-    color: #dbf0fa;
+    color: colors.$blue0;
     background-color: black;
     overflow: hidden;
     text-overflow: ellipsis;
