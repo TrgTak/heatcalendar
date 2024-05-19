@@ -5,7 +5,7 @@
     appTooltip
     [info]="details().tooltip"
     [attr.aria-label]="details().label"
-    [tabindex]="0"
+    [tabindex]="count() ? 0 : -1"
 >
 </div>
 <div 

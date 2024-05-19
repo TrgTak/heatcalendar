@@ -21,9 +21,11 @@ export class DummyDataService {
     let data: AggregateResponse = {};
     for (let i = 0; i < 200; i++) {
       const k =  Math.floor(Math.random() * (isLeapYear ? 366: 365));
-      const v = 1 + i < 100 ?
-        Math.floor(Math.random() * 27):
-        Math.floor(Math.random() * 7);
+      const v = 1 + (
+        i < 100 ?
+          Math.floor(Math.random() * 27) :
+          Math.floor(Math.random() * 7)
+      );
       if (data[k]) {
         continue;
       }
