@@ -28,6 +28,7 @@ export class CalendarComponent implements OnInit {
   cellOffset = computed(()=> { return (this.months()[0].firstWeekday - this.locale.meta().weekStart + 7) % 7 });
 
   /**
+  * Changes the calendar year via the calendar service's callback and triggers re-fetching of the data.
   * @param year New year value to switch the calendar to.
   */
   onYearChange(year: number): void {
@@ -39,9 +40,9 @@ export class CalendarComponent implements OnInit {
   * @param dayIndex Index based on the day within the year.
   * @return Returns true if dayIndex is within the range of the year starting from 0.
   */
-  validateCell(cellIndex: number): boolean {
-      const isPrevYear = cellIndex < this.cellOffset();
-      const isNextYear = cellIndex >= this.days() + this.cellOffset();
+  validateCell(dayIndex: number): boolean {
+      const isPrevYear = dayIndex < this.cellOffset();
+      const isNextYear = dayIndex >= this.days() + this.cellOffset();
       return !(isPrevYear || isNextYear)
   }
 
@@ -67,7 +68,7 @@ export class CalendarComponent implements OnInit {
   /**
   * @param x Column index of a calendar cell.
   * @param y Row index of a calendar cell.
-  * @return Returns an object for for ngClass with the correct border utility classes based on the cell's position.
+  * @return Returns an object for ngClass with the correct border utility classes based on the cell's position.
   */
   getCellBorders(x: number, y: number): {[key: string]: boolean} {
     let cellBorders: {[key: string]: boolean} = {};

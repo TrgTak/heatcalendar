@@ -13,7 +13,7 @@ import { OptionModel } from './types/generic';
 })
 export class AppComponent {
   constructor( public locale: LocaleService ) {};
-  onLocaleChange(selected: OptionModel) {
+  onLocaleChange(selected: OptionModel): void {
     this.locale.changeLocale(selected.value);
   };
 }

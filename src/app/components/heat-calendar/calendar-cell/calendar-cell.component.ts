@@ -48,7 +48,7 @@ export class CalendarCellComponent {
 
   /**
   * @param count Number of the results in the cell's according day.
-  * @return 
+  * @return Returns an object for ngClass with the correct background-color utility class based on the given count.
   */
   public getColor(count: number): {[key: string]: boolean} {
     let cellColor: {[key: string]: boolean} = {};

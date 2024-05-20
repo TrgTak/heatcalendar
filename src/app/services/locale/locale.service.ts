@@ -18,6 +18,7 @@ export class LocaleService {
   public meta = this.metaSig.asReadonly();
 
   /**
+  * Changes the locale of the service.
   * @param baseName Any locale baseName.
   */
   public changeLocale(baseName: string): void {

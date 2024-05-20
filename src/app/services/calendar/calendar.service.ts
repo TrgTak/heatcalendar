@@ -23,6 +23,7 @@ export class CalendarService {
   public meta = this.metaSig.asReadonly();
 
   /**
+  * Changes the calendar year.
   * @param year New year value to switch the calendar to.
   */
   public changeYear(year: number): void {
