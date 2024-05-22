@@ -10,6 +10,13 @@ export type AggregateResponse = {
     [key: string]: number
 };
 
+export type AggregateParams = {
+    aggregate: "count" | "sum",
+    attr: string,
+    groupBy: string,
+    [key: string]: any
+}
+
 export type LocaleMeta = {
     locale: Intl.Locale,
     monthLabels: string[],

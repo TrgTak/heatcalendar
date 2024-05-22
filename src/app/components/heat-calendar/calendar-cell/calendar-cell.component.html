@@ -15,8 +15,8 @@
 >
 </div>
 <div 
-    *ngIf="legend()"
+    *ngIf="legend() > 0"
     class="heat-calendar-legend"
-    [ngClass]="getColor(count())"
+    [ngClass]="getColor(legend())"
 >
 </div>

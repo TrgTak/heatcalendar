@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed } from '@angular/core';
+import { Component, OnInit, computed, input } from '@angular/core';
 import { CalendarService } from '../../../services/calendar/calendar.service';
 import { DummyDataService } from '../../../services/dummy-data/dummy-data.service';
 import { LocaleService } from '../../../services/locale/locale.service';
+import { AggregateParams } from '../../../types/generic';
 import { CalendarCellComponent } from '../calendar-cell/calendar-cell.component';
 
 @Component({
@@ -18,7 +19,6 @@ export class CalendarComponent implements OnInit {
     private locale: LocaleService,
     private dummy: DummyDataService
   ) {};
-  data = computed(() => { return this.dummy.result() }); //FIXME: Dummy data.
   meta = computed(() => { return this.locale.meta() });
   year = computed(() => { return this.calendar.meta().year });
   months = computed(() => { return this.calendar.getMonthMeta(this.year(), this.meta().locale) });
@@ -26,6 +26,24 @@ export class CalendarComponent implements OnInit {
   columnCount = computed(() => { return Math.ceil(this.days() / 7) });
   monthTransitions = computed(() => { return this.calendar.getMonthTransitions(this.year()) });
   cellOffset = computed(()=> { return (this.months()[0].firstWeekday - this.locale.meta().weekStart + 7) % 7 });
+  dateField = input<string>(); //FIXME: Validate whatever is passed, if it is legit field of the data model and type is date | datetime etc.
+  parameters = input<{[key: string]: any}>();
+
+  //FIXME: Just sample parameters, don't forget to check this once backend is there.
+  params = computed<AggregateParams>(() => {
+    const calendarStart = new Date(this.calendar.meta().year, 0, 1).toISOString();
+    const calendarEnd = new Date(this.calendar.meta().year + 1, 0, 1).toISOString();
+    const groupBy = `${this.dateField()}.day`
+    const newParams: AggregateParams = {
+      [`${this.dateField()}__gt`]: calendarStart,
+      [`${this.dateField()}__lte`]: calendarEnd,
+      groupBy: groupBy,
+      aggregate: "count",
+      attr: "id",
+      ...this.parameters()
+    }
+    return newParams
+  })
 
   /**
   * Changes the calendar year via the calendar service's callback and triggers re-fetching of the data.
@@ -33,7 +51,7 @@ export class CalendarComponent implements OnInit {
   */
   onYearChange(year: number): void {
     this.calendar.changeYear(year);
-    this.dummy.getDummyData(year); //FIXME: Dummy data.
+    this.dummy.getAggregate(); //FIXME: Dummy data.
   }
 
   /**
@@ -92,6 +110,6 @@ export class CalendarComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.dummy.getDummyData(this.year()); //FIXME: Dummy data.
+    this.dummy.getAggregate(); //FIXME: Dummy data.
   }
 }

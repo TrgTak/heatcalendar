@@ -43,7 +43,6 @@
                 >
                     <div class="heat-calendar-day">
                         <app-calendar-cell
-                            [count]="data()[y + x * 7 - cellOffset()]"
                             [dayIndex]="y + x * 7 - cellOffset()"
                             [disabled]="!validateCell(y + x * 7)"
                         ></app-calendar-cell>
@@ -55,8 +54,7 @@
     <div class="legends" *ngIf="year()">
         <div class="legend" *ngFor="let _ of [].constructor(5); index as i">
             <app-calendar-cell
-                [count]="i * 5"
-                [legend]="true"
+                [legend]="(i + 1) * 5"
             ></app-calendar-cell>
             &nbsp;
             <!-- FIXME: Hardcoded string. Translate or configure. -->

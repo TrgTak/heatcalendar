@@ -1,4 +1,4 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { CalendarMeta, MonthMeta } from '../../types/generic';
 import { LocaleService } from '../locale/locale.service';

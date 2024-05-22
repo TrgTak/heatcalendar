@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, DoCheck, computed, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { TooltipDirective } from '../../../directives/tooltip.directive';
 import { CalendarService } from '../../../services/calendar/calendar.service';
+import { DummyDataService } from '../../../services/dummy-data/dummy-data.service';
 import { LocaleService } from '../../../services/locale/locale.service';
 
 @Component({
@@ -15,13 +16,24 @@ import { LocaleService } from '../../../services/locale/locale.service';
 export class CalendarCellComponent {
   constructor( 
     private locale: LocaleService,
-    private calendar: CalendarService
+    private calendar: CalendarService,
+    private dummy: DummyDataService
   ) {};
   dayIndex = input<number>(0);
-  count = input<number>(0);
   disabled = input<boolean>(false);
-  legend = input<boolean>(false);
+  legend = input<number>(0);
   details = computed(() => { return this.generateTooltip(this.calendar.meta().year)});
+
+  count = computed<number>(() => {
+    const ms = new Date(this.calendar.meta().year, 0, 1).getTime() + this.dayIndex() * 1000 * 60 * 60 * 24;
+
+    //FIXME: About There is nothing wrong but if dateKeys will be based on ISO, timezone related magic must be done in the
+    //backend in the future and aggregation must be done based on the timezone information of the user (either via passing in query parameters
+    //to the GET request or backend reading the information from the active session of the user).
+    //For now this can be confusing on the frontend, as the keys might look like they are showing the wrong day due to timezone differences.
+    const key = new Date(ms).toISOString().substring(0,10);
+    return this.dummy.result()[key] || 0
+  })
 
   /**
   * @param year Calendar year.
@@ -53,14 +65,15 @@ export class CalendarCellComponent {
   public getColor(count: number): {[key: string]: boolean} {
     let cellColor: {[key: string]: boolean} = {};
     for (let i = 0; i < 5; i++) {
-      const start = i * 5;
+      const start = (i * 5) + 1;
       const end = (i + 1) * 5;
       if (start <= count) {
         if (i === 4) cellColor["bg-blue-6"] = true;
-        else if (count < end) cellColor[`bg-blue-${i + 2}`] = true;
-        else continue
+        else if (count <= end) {
+          cellColor[`bg-blue-${i + 2}`] = true;
+          break;
+        }
       }
-      else continue;
     }
     return cellColor;
   };
