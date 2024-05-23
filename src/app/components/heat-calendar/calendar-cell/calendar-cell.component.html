@@ -1,13 +1,14 @@
-<div
+<button
     *ngIf="!disabled() && !legend()"
     class="heat-calendar-cell"
     [ngClass]="getColor(count())"
     appTooltip
     [info]="details().tooltip"
     [attr.aria-label]="details().label"
-    [tabindex]="count() ? 0 : -1"
+    (click)="handleClick()"
+    [disabled]="!count()"
 >
-</div>
+</button>
 <div 
     *ngIf="disabled()"
     class="disabled heat-calendar-cell"

@@ -45,6 +45,8 @@
                         <app-calendar-cell
                             [dayIndex]="y + x * 7 - cellOffset()"
                             [disabled]="!validateCell(y + x * 7)"
+                            [parameters]="contentParams()"
+                            [dateField]="dateField()"
                         ></app-calendar-cell>
                     </div>
                 </td>

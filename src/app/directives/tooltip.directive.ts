@@ -1,14 +1,22 @@
 import { Directive, ElementRef, HostListener, Input } from '@angular/core';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Directive({
   selector: '[appTooltip]',
   standalone: true
 })
 export class TooltipDirective {
-  constructor(private el: ElementRef) {};
+  constructor(
+    private el: ElementRef,
+    private router: Router
+  ) {};
   @Input() info: string | number = "";
   private tooltip?: HTMLElement;
   private timeoutID: any = undefined; // Handling DOM manipulations with timeouts for optimization.
+
+  private subscriptions: Subscription[] = [];
+  dispose() {this.subscriptions.forEach(subscription => subscription.unsubscribe())};
 
   @HostListener("mouseenter") onMouseEnter() {
     if (!this.tooltip && this.info) {
@@ -24,7 +32,7 @@ export class TooltipDirective {
       this.hide();
     }
   }
-
+  
   show(): void {
     // DOM manipulation is prevented via this condition, in case if timeoutID is cleared via mouseleave event.
     if (this.timeoutID) {
@@ -39,6 +47,7 @@ export class TooltipDirective {
     this.tooltip?.classList.remove("hc-tooltip-show");
     this.tooltip?.remove();
     this.tooltip = undefined;
+    this.dispose();
   }
 
   create(): void {
@@ -46,6 +55,12 @@ export class TooltipDirective {
     this.tooltip.classList.add("hc-tooltip");
     this.tooltip.textContent = `${this.info}`;
     document.body.appendChild(this.tooltip);
+    const subscription = this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        this.hide();
+      };
+    });
+    this.subscriptions.push(subscription)
   }
 
   setPosition(): void {

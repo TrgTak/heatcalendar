@@ -1,5 +1,4 @@
 import { Injectable, signal } from '@angular/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
 import { LocaleMeta } from '../../types/generic';
 import { LOCALES } from './locale.options';
 
@@ -7,13 +6,10 @@ import { LOCALES } from './locale.options';
   providedIn: 'root'
 })
 export class LocaleService {
-  private subscriptions: Subscription[] = [];
-  dispose() {this.subscriptions.forEach(subscription => subscription.unsubscribe())};
 
   public localeOptions = LOCALES;
   public defaultOption = LOCALES.find(o => o.value === navigator.language) || LOCALES[0];
 
-  private lang = new BehaviorSubject<string>(this.defaultOption.value);
   private metaSig = signal<LocaleMeta>(this.getLocaleMeta(this.defaultOption.value));
   public meta = this.metaSig.asReadonly();
 
@@ -23,15 +19,7 @@ export class LocaleService {
   */
   public changeLocale(baseName: string): void {
     /* FIXME: figure out reliable type for locale baseNames if possible. */
-    if (baseName) {
-      this.dispose();
-      this.lang.next(baseName);
-      const subscription = this.lang.asObservable().subscribe((res) => {
-        const newMeta = this.getLocaleMeta(res);
-        this.metaSig.update(() => newMeta);
-      });
-      this.subscriptions.push(subscription);
-    }
+    this.metaSig.update(() => this.getLocaleMeta(baseName));
   }
 
   /**

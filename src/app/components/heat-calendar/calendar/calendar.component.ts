@@ -29,8 +29,8 @@ export class CalendarComponent implements OnInit {
   dateField = input<string>(); //FIXME: Validate whatever is passed, if it is legit field of the data model and type is date | datetime etc.
   parameters = input<{[key: string]: any}>();
 
-  //FIXME: Just sample parameters, don't forget to check this once backend is there.
-  params = computed<AggregateParams>(() => {
+  //FIXME: Just sample parameters, later to be used for fetching real data.
+  aggregateParams = computed<AggregateParams>(() => {
     const calendarStart = new Date(this.calendar.meta().year, 0, 1).toISOString();
     const calendarEnd = new Date(this.calendar.meta().year + 1, 0, 1).toISOString();
     const groupBy = `${this.dateField()}.day`
@@ -43,6 +43,12 @@ export class CalendarComponent implements OnInit {
       ...this.parameters()
     }
     return newParams
+  })
+
+  //Parameters to pass through navigation on clicking a cell
+  contentParams = computed(() => {
+    const {aggregate, attr, groupBy, ...rest} = this.aggregateParams();
+    return rest
   })
 
   /**

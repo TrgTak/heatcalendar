@@ -13,4 +13,8 @@ export const routes: Routes = [
             }
         }
     },
+    {
+        path: "daily",
+        loadComponent: () => import("./components/daily-data/daily-data.component").then(c => c.DailyDataComponent),
+    },
 ];
