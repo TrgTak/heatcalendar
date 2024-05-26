@@ -44,7 +44,7 @@ export class LocaleService {
   private getDayLabels(locale: Intl.Locale): string[] {
     const firstDay = (locale as any).weekInfo.firstDay % 7;
     const labels = [...Array(7).keys()].map(key => 
-      new Date(0, 0, key).toLocaleString(locale, { weekday: 'short' })
+      new Date(0, 0, key).toLocaleString(locale.baseName, { weekday: 'short' })
     );
     return [
       ...labels.slice(firstDay),
@@ -58,7 +58,7 @@ export class LocaleService {
   */
   private getMonthLabels(locale: Intl.Locale): string[] {
     return [...Array(12).keys()].map(key => 
-      new Date(0, key).toLocaleString(locale, { month: 'short' })
+      new Date(0, key).toLocaleString(locale.baseName, { month: 'short' })
     );
   };
 

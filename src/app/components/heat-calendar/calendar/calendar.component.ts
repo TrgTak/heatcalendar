@@ -18,8 +18,7 @@ export class CalendarComponent {
     private locale: LocaleService,
   ) {};
 
-  today = new Date();
-  year = input<number>(this.today.getFullYear());
+  year = input.required<number>();
   data = input<AggregateResponse>({});
   onCellClick = output<any>();
   meta = computed(() => { return this.locale.meta() });
