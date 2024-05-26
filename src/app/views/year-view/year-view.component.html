@@ -1,0 +1,24 @@
+<div 
+    class="year-view"
+    [attr.aria-label]="'heat calendar ' + year()"
+    [tabindex]="0"
+>
+    <div class="paginator">
+        <button 
+            class="paginator-button paginator-prev"
+            [attr.aria-label]="'switch calendar to ' + (year() - 1)"
+            (click)="onYearChange(year() - 1)" 
+        ><</button>
+        <h3>{{year()}}</h3>
+        <button 
+            class="paginator-button paginator-next"
+            (click)="onYearChange(year() + 1)" 
+            [attr.aria-label]="'switch calendar to ' + (year() + 1)"
+        >></button>
+    </div>
+    <app-calendar
+        [year]="year()"
+        [data]="data()"
+        (onCellClick)="onCellClick($event)"
+    ></app-calendar>
+</div>

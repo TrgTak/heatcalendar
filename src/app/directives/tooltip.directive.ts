@@ -1,5 +1,5 @@
-import { Directive, ElementRef, HostListener, Input } from '@angular/core';
-import { NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { Directive, ElementRef, HostListener, input } from '@angular/core';
+import { NavigationStart, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 @Directive({
@@ -11,20 +11,25 @@ export class TooltipDirective {
     private el: ElementRef,
     private router: Router
   ) {};
-  @Input() info: string | number = "";
+  label = input<any>("");
+  info = input<any>("");
   private tooltip?: HTMLElement;
   private timeoutID: any = undefined; // Handling DOM manipulations with timeouts for optimization.
 
   private subscriptions: Subscription[] = [];
   dispose() {this.subscriptions.forEach(subscription => subscription.unsubscribe())};
 
-  @HostListener("mouseenter") onMouseEnter() {
-    if (!this.tooltip && this.info) {
+  @HostListener("mouseenter")
+  @HostListener("focus")
+  initiate() {
+    if (!this.tooltip && this.info()) {
       this.timeoutID = setTimeout(() => this.show(), 200); // Setting timeoutID before show() triggers.
     }
   }
 
-  @HostListener("mouseleave") onMouseLeave() {
+  @HostListener("mouseleave") 
+  @HostListener("blur")
+  dismiss() {
     if (this.timeoutID) {
       this.timeoutID = clearTimeout(this.timeoutID); // Clearing timeoutID and preventing show() to trigger, if leaving happens too quick.
     }
@@ -53,7 +58,16 @@ export class TooltipDirective {
   create(): void {
     this.tooltip = document.createElement("span");
     this.tooltip.classList.add("hc-tooltip");
-    this.tooltip.textContent = `${this.info}`;
+    if (this.label()) {
+      const label = document.createElement("div");
+      label.classList.add("hc-tooltip-label");
+      label.textContent = `${this.label()}`;
+      this.tooltip.appendChild(label);
+      
+    }
+    const info = document.createElement("div");
+    info.textContent = `${this.info()}`;
+    this.tooltip.appendChild(info);
     document.body.appendChild(this.tooltip);
     const subscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
@@ -68,7 +82,7 @@ export class TooltipDirective {
     const tooltipRect = this.tooltip?.getBoundingClientRect();
     if (!tooltipRect) return
     if (this.tooltip) {
-      this.tooltip.style.top = `${elementRect.top - tooltipRect?.height - 2}px`;
+      this.tooltip.style.top = `${elementRect.top - tooltipRect?.height - 6}px`;
       this.tooltip.style.left = `${elementRect.left + (elementRect.width - tooltipRect.width) / 2}px`;
     }
   }

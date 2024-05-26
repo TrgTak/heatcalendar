@@ -4,7 +4,7 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
     {
         path: "",
-        loadComponent: () => import("./components/heat-calendar/calendar/calendar.component").then(c => c.CalendarComponent),
+        loadComponent: () => import("./views/year-view/year-view.component").then(c => c.YearViewComponent),
         data: {
             //FIXME: Just sample parameters, field names etc. Don't forget to check this once backend is there.
             dateField: "creation_time",
@@ -14,7 +14,7 @@ export const routes: Routes = [
         }
     },
     {
-        path: "daily",
-        loadComponent: () => import("./components/daily-data/daily-data.component").then(c => c.DailyDataComponent),
+        path: "day",
+        loadComponent: () => import("./views/day-view/day-view.component").then(c => c.DayViewComponent),
     },
 ];

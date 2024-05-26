@@ -12,6 +12,6 @@
 .heat-calendar-cell:hover:not(.disabled), 
 .heat-calendar-cell:focus:not(.disabled) {
     background-color: c.$blue1;
-    outline: 1px solid ;
+    outline: 1px solid c.$blue4;
     outline-offset: 0;
 }

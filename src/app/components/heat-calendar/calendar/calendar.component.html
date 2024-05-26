@@ -1,66 +1,46 @@
-
-<div 
-    class="heat-calendar-container"
-    [attr.aria-label]="'heat calendar ' + year()"
-    [tabindex]="0"
->
-    <div class="paginator">
-        <button 
-            class="paginator-button paginator-prev"
-            [attr.aria-label]="'switch calendar to ' + (year() - 1)"
-            (click)="onYearChange(year() - 1)" 
-        ><</button>
-        <h3>{{year()}}</h3>
-        <button 
-            class="paginator-button paginator-next"
-            (click)="onYearChange(year() + 1)" 
-            [attr.aria-label]="'switch calendar to ' + (year() + 1)"
-        >></button>
-    </div>
-    <div *ngIf="!year()" style="margin-bottom: 2px; font-weight: bold;">Year must be selected.</div>
-    <table class="heat-calendar">
-        <thead *ngIf="year()">
-            <tr>
-                <!-- colspan in a way to push first month th to align with the given top td border of the month -->
-                <th [attr.colspan]="cellOffset() === 0 ? 1 : 2"></th>
-                <!-- colspan in a way to push each following month th by also checking to how many calendar weeks the month is spreading to -->
-                <th 
-                    [attr.colspan]="months()[i].firstWeekday === meta().weekStart ? months()[i].weekSpread : months()[i].weekSpread - 1"
-                    *ngFor="let _ of [].constructor(12); index as i"
-                >
-                    <div class="label-column">{{meta().monthLabels[i]}}</div>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let dayLabel of meta().weekDayLabels; index as y">
-                <td *ngIf="year()" class="label-column">
-                    <small>{{dayLabel}}</small>
-                </td>
-                <td 
-                    *ngFor="let _ of [].constructor(columnCount()); index as x"
-                    [ngClass]="getCellBorders(x, y)"
-                >
-                    <div class="heat-calendar-day">
-                        <app-calendar-cell
-                            [dayIndex]="y + x * 7 - cellOffset()"
-                            [disabled]="!validateCell(y + x * 7)"
-                            [parameters]="contentParams()"
-                            [dateField]="dateField()"
-                        ></app-calendar-cell>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <div class="legends" *ngIf="year()">
-        <div class="legend" *ngFor="let _ of [].constructor(5); index as i">
-            <app-calendar-cell
-                [legend]="(i + 1) * 5"
-            ></app-calendar-cell>
-            &nbsp;
-            <!-- FIXME: Hardcoded string. Translate or configure. -->
-            <small>{{(i + 1) * 5 - 4}} {{i === 4 ? "or more" : "- " + (i + 1) * 5}} results</small>
-        </div>
+<div *ngIf="!year()" style="margin-bottom: 2px; font-weight: bold;">Year must be selected.</div>
+<table class="heat-calendar">
+    <thead *ngIf="year()">
+        <tr>
+            <!-- colspan in a way to push first month th to align with the given top td border of the month -->
+            <th [attr.colspan]="cellOffset() === 0 ? 1 : 2"></th>
+            <!-- colspan in a way to push each following month th by also checking to how many calendar weeks the month is spreading to -->
+            <th 
+                [attr.colspan]="months()[i].firstWeekday === meta().weekStart ? months()[i].weekSpread : months()[i].weekSpread - 1"
+                *ngFor="let _ of [].constructor(12); index as i"
+            >
+                <div class="label-column">{{meta().monthLabels[i]}}</div>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let dayLabel of meta().weekDayLabels; index as y">
+            <td *ngIf="year()" class="label-column">
+                <small>{{dayLabel}}</small>
+            </td>
+            <td 
+                *ngFor="let _ of [].constructor(columnCount()); index as x"
+                [ngClass]="getCellBorders(x, y)"
+            >
+                <div class="heat-calendar-day">
+                    <app-calendar-cell
+                        [disabled]="!validateCell(y + x * 7)"
+                        [count]="getCellValue(y + x * 7 - cellOffset())"
+                        [date]="getCellDate(y + x * 7 - cellOffset())"
+                        (onClick)="handleClick($event)"
+                    ></app-calendar-cell>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<div class="legends" *ngIf="year()">
+    <div class="legend" *ngFor="let _ of [].constructor(5); index as i">
+        <app-calendar-cell
+            [legend]="(i + 1) * 5"
+        ></app-calendar-cell>
+        &nbsp;
+        <!-- FIXME: Hardcoded string. Translate or configure. -->
+        <small>{{(i + 1) * 5 - 4}} {{i === 4 ? "or more" : "- " + (i + 1) * 5}} results</small>
     </div>
 </div>

@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, input } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { CalendarService } from '../../../services/calendar/calendar.service';
-import { DummyDataService } from '../../../services/dummy-data/dummy-data.service';
 import { LocaleService } from '../../../services/locale/locale.service';
-import { AggregateParams } from '../../../types/generic';
+import { AggregateResponse } from '../../../types/generic';
 import { CalendarCellComponent } from '../calendar-cell/calendar-cell.component';
 
 @Component({
@@ -13,51 +12,39 @@ import { CalendarCellComponent } from '../calendar-cell/calendar-cell.component'
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.scss',
 })
-export class CalendarComponent implements OnInit {
+export class CalendarComponent {
   constructor(
     private calendar: CalendarService,
     private locale: LocaleService,
-    private dummy: DummyDataService
   ) {};
+
+  today = new Date();
+  year = input<number>(this.today.getFullYear());
+  data = input<AggregateResponse>({});
+  onCellClick = output<any>();
   meta = computed(() => { return this.locale.meta() });
-  year = computed(() => { return this.calendar.meta().year });
   months = computed(() => { return this.calendar.getMonthMeta(this.year(), this.meta().locale) });
   days = computed(() => { return this.calendar.isLeapYear(this.year()) ? 366 : 365 });
   columnCount = computed(() => { return Math.ceil(this.days() / 7) });
   monthTransitions = computed(() => { return this.calendar.getMonthTransitions(this.year()) });
   cellOffset = computed(()=> { return (this.months()[0].firstWeekday - this.locale.meta().weekStart + 7) % 7 });
-  dateField = input<string>(); //FIXME: Validate whatever is passed, if it is legit field of the data model and type is date | datetime etc.
-  parameters = input<{[key: string]: any}>();
-
-  //FIXME: Just sample parameters, later to be used for fetching real data.
-  aggregateParams = computed<AggregateParams>(() => {
-    const calendarStart = new Date(this.calendar.meta().year, 0, 1).toISOString();
-    const calendarEnd = new Date(this.calendar.meta().year + 1, 0, 1).toISOString();
-    const groupBy = `${this.dateField()}.day`
-    const newParams: AggregateParams = {
-      [`${this.dateField()}__gt`]: calendarStart,
-      [`${this.dateField()}__lte`]: calendarEnd,
-      groupBy: groupBy,
-      aggregate: "count",
-      attr: "id",
-      ...this.parameters()
-    }
-    return newParams
-  })
-
-  //Parameters to pass through navigation on clicking a cell
-  contentParams = computed(() => {
-    const {aggregate, attr, groupBy, ...rest} = this.aggregateParams();
-    return rest
-  })
 
   /**
-  * Changes the calendar year via the calendar service's callback and triggers re-fetching of the data.
-  * @param year New year value to switch the calendar to.
+  * @param dayIndex Index based on the day within the year.
+  * @return Returns date object of the dayIndex of the year
   */
-  onYearChange(year: number): void {
-    this.calendar.changeYear(year);
-    this.dummy.getAggregate(); //FIXME: Dummy data.
+  getCellDate(dayIndex: number) {
+    const ms = new Date(this.year(), 0, 1).getTime() + dayIndex * 1000 * 60 * 60 * 24;
+    return new Date(ms)
+  }
+
+  /**
+  * @param dayIndex Index based on the day within the year.
+  * @return Returns aggregate value from the available data according to given dayIndex of the year
+  */
+  getCellValue(dayIndex: number) {
+    const key = this.getCellDate(dayIndex).toISOString().substring(0,10);
+    return this.data()[key] || 0
   }
 
   /**
@@ -115,7 +102,7 @@ export class CalendarComponent implements OnInit {
     return cellBorders
   };
 
-  ngOnInit(): void {
-    this.dummy.getAggregate(); //FIXME: Dummy data.
+  handleClick(e: Event): void {
+    this.onCellClick.emit(e)
   }
 }
