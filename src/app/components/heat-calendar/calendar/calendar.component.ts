@@ -24,27 +24,23 @@ export class CalendarComponent {
   meta = computed(() => { return this.locale.meta() });
   months = computed(() => { return this.calendar.getMonthMeta(this.year(), this.meta().locale) });
   days = computed(() => { return this.calendar.isLeapYear(this.year()) ? 366 : 365 });
-  columnCount = computed(() => { return Math.ceil(this.days() / 7) });
-  monthTransitions = computed(() => { return this.calendar.getMonthTransitions(this.year()) });
   cellOffset = computed(()=> { return (this.months()[0].firstWeekday - this.locale.meta().weekStart + 7) % 7 });
+  columnCount = computed(() => {
+    //Days of the year spreads to 54 weeks only if it is a leap year and first day of the year is the last day of the week in given locale.
+    if (this.calendar.isLeapYear(this.year()) && this.cellOffset() === 6) return 54;
+    //Otherwise days are always spread to 53 weeks.
+    else return 53
+  });
+  monthTransitions = computed(() => { return this.calendar.getMonthTransitions(this.year()) });
 
-  /**
-  * @param dayIndex Index based on the day within the year.
-  * @return Returns date object of the dayIndex of the year
-  */
-  getCellDate(dayIndex: number) {
-    const ms = new Date(this.year(), 0, 1).getTime() + dayIndex * 1000 * 60 * 60 * 24;
-    return new Date(ms)
-  }
-
-  /**
-  * @param dayIndex Index based on the day within the year.
-  * @return Returns aggregate value from the available data according to given dayIndex of the year
-  */
-  getCellValue(dayIndex: number) {
-    const key = this.getCellDate(dayIndex).toISOString().substring(0,10);
-    return this.data()[key] || 0
-  }
+  calendarMap = computed(() => {
+    //Mapping given aggregate data to dayIndexes of the calendar
+    return [...Array(this.days()).keys()].map((k, i) => {
+      const ms = new Date(this.year(), 0, 1).getTime() + (i + 1) * 1000 * 60 * 60 * 24;
+      const key = new Date(ms).toISOString().substring(0,10);
+      return this.data()[key] || 0
+    })
+  })
 
   /**
   * @param dayIndex Index based on the day within the year.
@@ -103,5 +99,5 @@ export class CalendarComponent {
 
   handleClick(e: Event): void {
     this.onCellClick.emit(e)
-  }
+  };
 }

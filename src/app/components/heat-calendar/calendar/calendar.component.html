@@ -25,9 +25,10 @@
                 >
                     <div class="heat-calendar-day">
                         <app-calendar-cell
+                            [dayIndex]="y + x * 7 - cellOffset()"
+                            [year]="year()"
                             [disabled]="!validateCell(y + x * 7)"
-                            [count]="getCellValue(y + x * 7 - cellOffset())"
-                            [date]="getCellDate(y + x * 7 - cellOffset())"
+                            [count]="calendarMap()[y + x * 7 - cellOffset()]"
                             (onClick)="handleClick($event)"
                         ></app-calendar-cell>
                     </div>

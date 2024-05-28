@@ -12,17 +12,20 @@ import { LocaleService } from '../../../services/locale/locale.service';
   hostDirectives: [TooltipDirective],
 })
 export class CalendarCellComponent {
-  constructor( 
-    private locale: LocaleService,
-  ) {};
+  constructor(private locale: LocaleService) {};
   disabled = input<boolean>(false);
   legend = input<number>(0);
   count = input<number>(0);
-  date = input<any>();
+  dayIndex = input<number>(0);
+  year = input<number>(0);
   onClick = output<any>();
+  date = computed(() => {
+    const ms = new Date(this.year(), 0, 1).getTime() + this.dayIndex() * 1000 * 60 * 60 * 24;
+    return new Date(ms);
+  });
   info = computed<string>(() => {
-    if (!this.count()) return "No results"
-    else return `${this.count()} ${this.count() > 1 ? "results" : "result"}`
+    if (!this.count()) return "No results";
+    else return `${this.count()} ${this.count() > 1 ? "results" : "result"}`;
   })
   localeBaseName = computed(() => this.locale.meta().locale.baseName);
 
@@ -48,5 +51,5 @@ export class CalendarCellComponent {
 
   handleClick(): void {
     this.onClick.emit({ value: this.date() });
-  }
+  };
 }

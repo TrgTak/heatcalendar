@@ -13,17 +13,16 @@ export class TooltipDirective {
   ) {};
   label = input<any>("");
   info = input<any>("");
-  private focalPoint?: HTMLElement;
   private tooltip?: HTMLElement;
   private timeoutID: any = undefined; // Handling DOM manipulations with timeouts for optimization.
 
   private subscriptions: Subscription[] = [];
-  dispose() { this.subscriptions.forEach(subscription => subscription.unsubscribe()) };
+  dispose() {this.subscriptions.forEach(subscription => subscription.unsubscribe())};
 
   @HostListener("mouseenter")
   @HostListener("focus")
   initiate() {
-    if (!this.focalPoint && this.info()) {
+    if (!this.tooltip && this.info()) {
       this.timeoutID = setTimeout(() => this.show(), 200); // Setting timeoutID before show() triggers.
     }
   }
@@ -34,7 +33,7 @@ export class TooltipDirective {
     if (this.timeoutID) {
       this.timeoutID = clearTimeout(this.timeoutID); // Clearing timeoutID and preventing show() to trigger, if leaving happens too quick.
     }
-    if (this.focalPoint) {
+    if (this.tooltip) {
       this.hide();
     }
   }
@@ -44,19 +43,19 @@ export class TooltipDirective {
     if (this.timeoutID) {
       this.create();
       this.setPosition();
+      this.tooltip?.classList.add("hc-tooltip-show");
     }
   }
 
   hide(): void {
     // hide doesn't need to clear timeoutID as it already happens with mouseleave listener.
-    this.focalPoint?.remove();
-    this.focalPoint = undefined;
+    this.tooltip?.classList.remove("hc-tooltip-show");
+    this.tooltip?.remove();
+    this.tooltip = undefined;
     this.dispose();
   }
 
   create(): void {
-    this.focalPoint = document.createElement("div");
-    this.focalPoint.style.position = "relative";
     this.tooltip = document.createElement("span");
     this.tooltip.classList.add("hc-tooltip");
     if (this.label()) {
@@ -69,8 +68,7 @@ export class TooltipDirective {
     const info = document.createElement("div");
     info.textContent = `${this.info()}`;
     this.tooltip.appendChild(info);
-    this.focalPoint.appendChild(this.tooltip);
-    this.el.nativeElement.appendChild(this.focalPoint);
+    document.body.appendChild(this.tooltip);
     const subscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.hide();
@@ -84,31 +82,19 @@ export class TooltipDirective {
     const tooltipRect = this.tooltip?.getBoundingClientRect();
     if (!tooltipRect) return
     if (this.tooltip) {
-      //Horizontal
+      //Horizontal adjustment
       const leftVal = elementRect.left + (elementRect.width - tooltipRect.width) / 2;
-      const rightVal = elementRect.right - (elementRect.width - tooltipRect.width) / 2;
       const rightEdge = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-      if (rightVal > rightEdge) {
-        //Avoiding to place tooltip out of right edge of the viewport
-        this.tooltip.style.right = `${elementRect.width / 2}px`;
+      this.tooltip.style.left = `${Math.min(
+        Math.max(leftVal, 4),
+        rightEdge - tooltipRect.width - 4
+      )}px`;
+      //Vertical adjustment
+      if (elementRect.top < tooltipRect.height + 4) {
+        this.tooltip.style.top = `${elementRect.bottom + window.scrollY + 4}px`;
       }
-      else if (leftVal < 0) {
-        //Avoiding to place tooltip out of left edge of the viewport
-        this.tooltip.style.left = `${elementRect.width / 2}px`;
-      }
-      else {
-        this.tooltip.style.left = "50%";
-        this.tooltip.style.transform = "translateX(-50%)";
-      }
-      //Vertical
-      const topVal = elementRect.top - tooltipRect.height;
-      if (topVal < 0) {
-        //Avoiding to place tooltip out of top edge of the viewport
-        this.tooltip.style.top = `${elementRect.height + 6}px`;
-      }
-      else {
-        this.tooltip.style.bottom = "6px"
-      }
+      else this.tooltip.style.top = `${elementRect.top - tooltipRect.height + window.scrollY - 4}px`;
+      
     }
   }
 }
